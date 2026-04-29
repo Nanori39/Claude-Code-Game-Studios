@@ -5,83 +5,70 @@
 
 ## Engine & Language
 
-- **Engine**: [TO BE CONFIGURED — run /setup-engine]
-- **Language**: [TO BE CONFIGURED]
-- **Rendering**: [TO BE CONFIGURED]
-- **Physics**: [TO BE CONFIGURED]
+- **Engine**: Godot 4.6
+- **Language**: GDScript
+- **Rendering**: Godot Forward+ renderer (2D)
+- **Physics**: Godot 2D physics（Jolt は3D用のため未使用）
 
 ## Input & Platform
 
-<!-- Written by /setup-engine. Read by /ux-design, /ux-review, /test-setup, /team-ui, and /dev-story -->
-<!-- to scope interaction specs, test helpers, and implementation to the correct input methods. -->
-
-- **Target Platforms**: [TO BE CONFIGURED — e.g., PC, Console, Mobile, Web]
-- **Input Methods**: [TO BE CONFIGURED — e.g., Keyboard/Mouse, Gamepad, Touch, Mixed]
-- **Primary Input**: [TO BE CONFIGURED — the dominant input for this game]
-- **Gamepad Support**: [TO BE CONFIGURED — Full / Partial / None]
-- **Touch Support**: [TO BE CONFIGURED — Full / Partial / None]
-- **Platform Notes**: [TO BE CONFIGURED — any platform-specific UX constraints]
+- **Target Platforms**: PC (Steam), Web (Browser); Mobile post-launch
+- **Input Methods**: Mouse/Keyboard, Touch (Web/Mobile)
+- **Primary Input**: Mouse（駒のクリック・ドラッグ操作が中心）
+- **Gamepad Support**: None（戦略ボードゲームのため不要）
+- **Touch Support**: Full（Web版・将来のモバイル版で必須）
+- **Platform Notes**: ホバー専用 UI は禁止（タッチ非対応のため）。全インタラクションはクリック/タップで完結。盤面のズーム・パンはマウスホイールとピンチの両方で動作させる。
 
 ## Naming Conventions
 
-- **Classes**: [TO BE CONFIGURED]
-- **Variables**: [TO BE CONFIGURED]
-- **Signals/Events**: [TO BE CONFIGURED]
-- **Files**: [TO BE CONFIGURED]
-- **Scenes/Prefabs**: [TO BE CONFIGURED]
-- **Constants**: [TO BE CONFIGURED]
+- **Classes**: PascalCase (e.g., `BoardCell`, `RoadNetwork`)
+- **Variables**: snake_case (e.g., `current_supply`, `road_count`)
+- **Signals/Events**: snake_case past tense (e.g., `road_created`, `fortress_collapsed`)
+- **Files**: snake_case matching class (e.g., `board_cell.gd`, `road_network.gd`)
+- **Scenes/Prefabs**: PascalCase matching root node (e.g., `BoardCell.tscn`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_BOARD_SIZE`, `COLLAPSE_TURN_COUNT`)
 
 ## Performance Budgets
 
-- **Target Framerate**: [TO BE CONFIGURED]
-- **Frame Budget**: [TO BE CONFIGURED]
-- **Draw Calls**: [TO BE CONFIGURED]
-- **Memory Ceiling**: [TO BE CONFIGURED]
+- **Target Framerate**: 60 fps
+- **Frame Budget**: 16.6 ms
+- **Draw Calls**: 200 maximum per frame（2D ボードゲームとして十分余裕）
+- **Memory Ceiling**: 500 MB（Web版を含むため抑制）
 
 ## Testing
 
-- **Framework**: [TO BE CONFIGURED]
-- **Minimum Coverage**: [TO BE CONFIGURED]
-- **Required Tests**: Balance formulas, gameplay systems, networking (if applicable)
+- **Framework**: GUT (Godot Unit Test) — 導入は `/test-setup` で実施
+- **Minimum Coverage**: 80%（バランス計算式・補給線判定・道生成ロジック）
+- **Required Tests**: 補給線判定、道生成、陣地計算、勝利条件判定、マップ生成の公平性検証
 
 ## Forbidden Patterns
 
-<!-- Add patterns that should never appear in this project's codebase -->
 - [None configured yet — add as architectural decisions are made]
 
 ## Allowed Libraries / Addons
 
-<!-- Add approved third-party dependencies here -->
 - [None configured yet — add as dependencies are approved]
 
 ## Architecture Decisions Log
 
-<!-- Quick reference linking to full ADRs in docs/architecture/ -->
 - [No ADRs yet — use /architecture-decision to create one]
 
 ## Engine Specialists
 
-<!-- Written by /setup-engine when engine is configured. -->
-<!-- Read by /code-review, /architecture-decision, /architecture-review, and team skills -->
-<!-- to know which specialist to spawn for engine-specific validation. -->
-
-- **Primary**: [TO BE CONFIGURED — run /setup-engine]
-- **Language/Code Specialist**: [TO BE CONFIGURED]
-- **Shader Specialist**: [TO BE CONFIGURED]
-- **UI Specialist**: [TO BE CONFIGURED]
-- **Additional Specialists**: [TO BE CONFIGURED]
-- **Routing Notes**: [TO BE CONFIGURED]
+- **Primary**: godot-specialist
+- **Language/Code Specialist**: godot-gdscript-specialist (.gd ファイル)
+- **Shader Specialist**: godot-shader-specialist (.gdshader, VisualShader)
+- **UI Specialist**: godot-specialist（専任なし — primary が UI も担当）
+- **Additional Specialists**: godot-gdextension-specialist（GDExtension/ネイティブC++ 必要時のみ）
+- **Routing Notes**: アーキテクチャ判断・ADR検証・横断的レビューは primary。コード品質・signal設計・静的型付け・GDScriptイディオムは GDScript specialist。マテリアル/シェーダーは shader specialist。GDExtension は native 拡張時のみ。
 
 ### File Extension Routing
 
-<!-- Skills use this table to select the right specialist per file type. -->
-<!-- If a row says [TO BE CONFIGURED], fall back to Primary for that file type. -->
-
 | File Extension / Type | Specialist to Spawn |
 |-----------------------|---------------------|
-| Game code (primary language) | [TO BE CONFIGURED] |
-| Shader / material files | [TO BE CONFIGURED] |
-| UI / screen files | [TO BE CONFIGURED] |
-| Scene / prefab / level files | [TO BE CONFIGURED] |
-| Native extension / plugin files | [TO BE CONFIGURED] |
-| General architecture review | Primary |
+| Game code (.gd files) | godot-gdscript-specialist |
+| Shader / material files (.gdshader, VisualShader) | godot-shader-specialist |
+| UI / screen files (Control nodes, CanvasLayer) | godot-specialist |
+| Scene / prefab / level files (.tscn, .tres) | godot-specialist |
+| Native extension / plugin files (.gdextension, C++) | godot-gdextension-specialist |
+| General architecture review | godot-specialist |
